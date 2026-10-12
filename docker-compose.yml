@@ -1,0 +1,30 @@
+# Monitor de Rede e Energia
+#   docker compose up -d --build
+# Painel: http://localhost:8090
+
+services:
+  monitor:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      TZ: America/Boa_Vista
+    volumes:
+      - ./config.toml:/config/config.toml:ro
+      - monitor_dados:/dados          # histórico (SQLite) e relatórios mensais
+    ports:
+      - "8090:8090"
+    # Em um mini PC Linux no cliente, troque "ports" por:  network_mode: host
+    # (o monitor passa a enxergar a rede local exatamente como o computador)
+
+  # Nobreak de mentira para demonstrar alertas de falta de energia.
+  # Em produção, apague este serviço e aponte o alvo "nut" para o servidor NUT real.
+  nobreak-simulado:
+    build: .
+    restart: unless-stopped
+    command: ["python", "simulador/nobreak.py"]
+    ports:
+      - "8091:8091"
+
+volumes:
+  monitor_dados:

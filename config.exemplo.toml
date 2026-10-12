@@ -1,0 +1,47 @@
+# Copie para "config.toml" e ajuste para o cliente.
+# Depois de mudar: docker compose restart monitor
+
+[geral]
+cliente = "Clínica Exemplo"
+responsavel = "Ítalo Fonteles · italofonteles.dev"
+intervalo_segundos = 60     # de quanto em quanto tempo verifica tudo
+falhas_para_alerta = 3      # quantas falhas seguidas até avisar (evita alarme falso)
+timeout_segundos = 3
+
+# ---------------------------------------------------------------------------
+# Equipamentos e serviços vigiados.
+#   tipo = "ping"  → host                (roteador, switch, computador)
+#   tipo = "tcp"   → host + porta        (câmera 554, impressora 9100, servidor 22...)
+#   tipo = "http"  → url                 (site, sistema web, painel do roteador)
+#   tipo = "nut"   → host (+ ups, porta) (nobreak via Network UPS Tools)
+#   categoria = "rede" | "servico" | "energia"   (muda o texto do alerta)
+# ---------------------------------------------------------------------------
+
+[[alvos]]
+nome = "Internet"
+tipo = "ping"
+host = "1.1.1.1"
+
+[[alvos]]
+nome = "DNS do Google"
+tipo = "tcp"
+host = "8.8.8.8"
+porta = 53
+
+[[alvos]]
+nome = "Site da empresa"
+tipo = "http"
+url = "https://italofonteles.dev"
+categoria = "servico"
+
+[[alvos]]
+nome = "Câmera da recepção"     # exemplo de equipamento desligado: vai gerar alerta
+tipo = "tcp"
+host = "10.255.255.1"
+porta = 554
+
+[[alvos]]
+nome = "Nobreak do rack"
+tipo = "nut"
+host = "nobreak-simulado"       # no cliente: IP do computador com o NUT instalado
+ups = "nobreak"
